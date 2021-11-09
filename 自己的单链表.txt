@@ -1,0 +1,188 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+//自定义结构体
+typedef struct Node{
+    int a;
+    struct Node *next;
+}Node;
+Node *head = NULL;
+Node *end = NULL;
+
+//创建链表操作
+void createList(int a){
+    Node *s=(Node *)malloc(sizeof(Node));
+    s->a=a;
+    s->next=NULL;
+    
+    if(NULL == head){
+        head = s;
+    }else{
+        end->next = s;
+    }
+    end = s;
+    
+}
+
+//对链表扫描输出操作
+void ScanList(){
+    Node *s = head;
+    while(s != NULL){
+        printf("%d \n",s->a);
+        s = s->next;
+    }
+}
+
+//根据输入参数定位指定结点操作
+Node *findElem(int k){
+    Node *s = head;
+    while(s != NULL){
+        if(k == s->a){
+            return s;
+        }
+        s = s->next;
+    }
+    
+    return NULL;
+}
+
+//删除头结点操作
+void deleteHead(){
+    //将旧头放入临时结点暂存
+    Node *s = head;
+    if(NULL == head){
+        printf("链表为空！");
+        return;
+    }
+    head = head->next;
+    free(s);
+}
+//删除尾结点操作
+void deleteTail(){
+    if(NULL == end){
+        printf("链表为空！");
+        return;
+    }
+    if(head == end){
+        head = NULL;
+        end = NULL;
+        free(head);
+    }else{
+        Node *s = head;
+        while(s->next != end){
+            s = s->next;
+        }
+        free(end);
+        end = s;
+        end->next = NULL;
+    }
+    
+}
+//删除指定结点操作
+void deleteTheElem(int m)
+{
+
+	//链表判断 是不是为空
+	if(NULL == head)
+	{
+	printf("链表为空 \n");
+	return;
+	}
+    //链表不为空，找这个节点
+	Node* s =findElem(m);
+	if(NULL == s)
+	{
+	printf("查无此点\n");
+	return;
+	}
+	//找到了,且只有一个节点
+	if(head == end)
+	{
+	free(head);
+	head = NULL;
+	end = NULL;
+	}
+	else if(head->next == end) //有两个节点
+	{
+	//看是删除头还是删除尾
+	if(end == s){ deleteHead(); }
+	else if(s==head){ deleteTail(); }	
+	}
+	else//多个节点
+	{
+		//看是删除头还是删除尾
+		if(end == s)
+			deleteTail();
+		else if(s == head)
+			deleteHead();	
+		else	//删除中间某个节点
+		{	//找要删除temp前一个，遍历
+			Node *e =head;
+			while(e->next!=s)
+			{
+			e=e->next;
+			}
+			//找到了
+			//让前一个直接连接后一个 跳过指定的即可
+			 e->next = s->next;
+			 free(s);
+		
+		}
+	}
+	
+
+}
+//在某个位置增加特定元素操作
+void addElem(int index,int n)
+{	
+
+    if (NULL == head)
+	{
+		printf("链表没有节点\n");
+		return;
+	}	
+    Node* e =findElem(index);
+	if(NULL == e)    //没有此节点
+	{
+		printf("没有指定节点\n");
+		return;
+	}
+    //有此节点
+    //创建临时节点，申请内存
+	Node* s =(Node *)malloc(sizeof(Node));
+	//节点成员进行赋值
+	s->a = n;
+	s->next = NULL;
+	if (e == end)
+	{
+	//尾巴的下一个指向新插入的节点
+	end->next = s;
+	//新的尾巴
+	end = s;
+	}else{
+	// 先连后面 
+	s->next=e->next;
+	//后连
+	e->next=s;
+	}
+}
+
+int main() { 
+    int i;
+    Node *findRes;
+	for(i = 0; i < 6; i++){
+	    createList(i);
+	    
+	}
+	addElem(4,14);
+	//deleteTail();
+	//deleteTheElem(4);
+	ScanList();
+	findRes = findElem(5);
+	if(findRes != NULL){
+	    printf("%d \n",findRes->a);
+	}else{
+	    printf("not find!");
+	}
+	
+}
